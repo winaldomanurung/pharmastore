@@ -14,6 +14,7 @@ app.use(
     exposedHeaders: ["UID", "Auth-Token"],
   })
 );
+app.use(express.static("public"));
 
 // Database connection
 const connection = require("./src/config");
@@ -31,7 +32,7 @@ app.get("/", (req, res) => {
   res.send("<h1>TEST</h1>");
 });
 
-app.use("/admin", routers.adminRouter);
+app.use("/admin", routers.adminProductRouter);
 
 app.listen(port, () => {
   console.log("Listening to Port: " + port);

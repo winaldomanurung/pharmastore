@@ -1,5 +1,5 @@
-const adminRouter = require("./admin-router");
+const adminProductRouter = require("./admin/products-router");
 
 module.exports = {
-  adminRouter,
+  adminProductRouter,
 };
