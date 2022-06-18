@@ -4,7 +4,10 @@ const databaseSync = require("../../config");
 const createError = require("../../helpers/createError");
 const createResponse = require("../../helpers/createResponse");
 const httpStatus = require("../../helpers/httpStatusCode");
-const { editProductSchema } = require("../../helpers/validation-schema");
+const {
+  editProductSchema,
+  addProductSchema,
+} = require("../../helpers/validation-schema");
 
 module.exports.getAdmin = async (req, res) => {
   console.log("sampe");
@@ -269,6 +272,7 @@ module.exports.updateProduct = async (req, res) => {
 module.exports.createProduct = (req, res) => {
   let newProduct;
   let path = "/product-images";
+  let error;
 
   const upload = uploader(path, "IMG").fields([{ name: "file" }]);
 
@@ -276,17 +280,26 @@ module.exports.createProduct = (req, res) => {
 
   upload(req, res, async (error) => {
     try {
-      if (error) {
-        console.log(error);
-        throw new createError(
-          httpStatus.Internal_Server_Error,
-          "Internal Server Error",
-          "Create product failed."
-        );
-      }
+      // if (error) {
+      //   throw new createError(
+      //     httpStatus.Internal_Server_Error,
+      //     "Internal Server Error",
+      //     "Create product failed."
+      //   );
+      // }
 
       let data = JSON.parse(req.body.data);
       let { name, description, category, stock, volume, unit, price } = data;
+
+      // Gunakan Joi untuk validasi data dari body
+      const { error } = addProductSchema.validate(data);
+      if (error) {
+        throw new createError(
+          httpStatus.Bad_Request,
+          "Create product failed",
+          error.details[0].message
+        );
+      }
 
       const CREATE_PRODUCT = `INSERT INTO products (name, description, category, stock, volume, unit, price) VALUES( ${database.escape(
         name

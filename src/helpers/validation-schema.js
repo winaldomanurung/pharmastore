@@ -1,14 +1,14 @@
 const Joi = require("joi");
 
-module.exports.registerUserSchema = Joi.object({
-  username: Joi.string().min(3).max(20).required(),
-  email: Joi.string().email().required(),
-  password: Joi.string()
-    .min(6)
-    .max(20)
-    .pattern(/[!@#$%&*_!]/)
-    .required(),
-  repeat_password: Joi.ref("password"),
+module.exports.addProductSchema = Joi.object({
+  name: Joi.string().min(3).max(50).required(),
+  description: Joi.string().min(3).max(200).required(),
+  category: Joi.string().min(3).max(25).required(),
+  stock: Joi.number().required(),
+  volume: Joi.number().required(),
+  unit: Joi.string().max(10).required(),
+  price: Joi.number().required(),
+  picture: Joi.string().max(200).required(),
 });
 
 module.exports.editProductSchema = Joi.object({
@@ -22,27 +22,10 @@ module.exports.editProductSchema = Joi.object({
   picture: Joi.string().max(200).allow(null, ""),
 });
 
-module.exports.loginUserSchema = Joi.object({
-  credential: Joi.string().min(3).max(30).required(),
-  password: Joi.string().min(6).max(13).required(),
-  // password : Joi.string().min(6).max(13).pattern(/[!@#$%&*_!]/).required()
+module.exports.addCategorySchema = Joi.object({
+  name: Joi.string().min(3).max(25).required(),
 });
 
-module.exports.resetPasswordUserSchema = Joi.object({
-  email: Joi.string().email().required(),
-});
-
-module.exports.addRestaurantSchema = Joi.object({
-  name: Joi.string().min(3).max(50).required(),
-  location: Joi.string().min(3).max(20).required(),
-  type: Joi.string().required(),
-  price: Joi.number().required(),
-  description: Joi.string().min(3).max(400).required(),
-});
-
-module.exports.addReviewSchema = Joi.object({
-  restaurantId: Joi.required(),
-  userId: Joi.required(),
-  reviewTitle: Joi.string().min(3).max(30).required(),
-  reviewDescription: Joi.string().min(3).max(300).required(),
+module.exports.editCategorySchema = Joi.object({
+  name: Joi.string().min(3).max(25).allow(null, ""),
 });

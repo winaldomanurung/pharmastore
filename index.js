@@ -33,6 +33,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/admin", routers.adminProductRouter);
+app.use("/admin/categories", routers.adminCategoriesRouter);
 
 app.listen(port, () => {
   console.log("Listening to Port: " + port);
