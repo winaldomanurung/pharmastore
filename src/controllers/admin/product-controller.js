@@ -13,30 +13,67 @@ module.exports.getAdmin = async (req, res) => {
 
 module.exports.readProducts = async (req, res) => {
   const page = req.query.page || 1;
+  const name = req.query.name;
+  const category = req.query.category;
   const limit = req.query.limit || 5;
+  const sortBy = req.query.sortBy || "id";
+  const order = req.query.order || "asc";
   const offset = (page - 1) * limit;
-  console.log(page, limit, offset);
+  console.log(page, limit, offset, name);
   try {
     // const CHECK_VERIFIED_USER = `SELECT isVerified,userId FROM users WHERE userId = ${database.escape(
     //   userId
     // )}`;
     // const [VERIFIED_USER] = await database.execute(CHECK_VERIFIED_USER);
 
-    const GET_PRODUCTS = `SELECT * FROM products LIMIT ${offset}, ${limit};`;
-    const [PRODUCTS] = await database.execute(GET_PRODUCTS);
+    let GET_PRODUCTS;
 
-    const GET_PRODUCTS_TOTAL = `SELECT * FROM products;`;
-    const [TOTAL_PRODUCTS] = await database.execute(GET_PRODUCTS_TOTAL);
+    if (name) {
+      GET_PRODUCTS = `SELECT * FROM products WHERE name LIKE '%${name}%' ORDER BY ${sortBy} ${order} LIMIT ${offset}, ${limit} ;`;
 
-    const response = new createResponse(
-      httpStatus.OK,
-      "Products data fetched",
-      "Products data fetched successfully!",
-      PRODUCTS,
-      TOTAL_PRODUCTS.length
-    );
+      const [PRODUCTS] = await database.execute(GET_PRODUCTS);
 
-    res.status(response.status).send(response);
+      const response = new createResponse(
+        httpStatus.OK,
+        "Products data fetched",
+        "Products data fetched successfully!",
+        PRODUCTS,
+        PRODUCTS.length
+      );
+
+      res.status(response.status).send(response);
+    } else if (category) {
+      GET_PRODUCTS = `SELECT * FROM products WHERE category LIKE '%${category}%' ORDER BY ${sortBy} ${order} LIMIT ${offset}, ${limit} ;`;
+
+      const [PRODUCTS] = await database.execute(GET_PRODUCTS);
+
+      const response = new createResponse(
+        httpStatus.OK,
+        "Products data fetched",
+        "Products data fetched successfully!",
+        PRODUCTS,
+        PRODUCTS.length
+      );
+
+      res.status(response.status).send(response);
+    } else {
+      GET_PRODUCTS = `SELECT * FROM products ORDER BY ${sortBy} ${order} LIMIT ${offset}, ${limit};`;
+
+      const [PRODUCTS] = await database.execute(GET_PRODUCTS);
+
+      const GET_PRODUCTS_TOTAL = `SELECT * FROM products;`;
+      const [TOTAL_PRODUCTS] = await database.execute(GET_PRODUCTS_TOTAL);
+
+      const response = new createResponse(
+        httpStatus.OK,
+        "Products data fetched",
+        "Products data fetched successfully!",
+        PRODUCTS,
+        TOTAL_PRODUCTS.length
+      );
+
+      res.status(response.status).send(response);
+    }
   } catch (err) {
     console.log("error : ", err);
     const isTrusted = err instanceof createError;
@@ -65,7 +102,8 @@ module.exports.readProductById = async (req, res) => {
     stock,
     volume, 
     unit, 
-    price
+    price, 
+    picture
     FROM products 
     WHERE id = ?; 
       `;
@@ -206,8 +244,8 @@ module.exports.updateProduct = async (req, res) => {
 
     const response = new createResponse(
       httpStatus.OK,
-      "Edit profile success",
-      "Profile changes saved successfully!",
+      "Update product success",
+      "Product update saved successfully!",
       FIND_UPDATED_PRODUCT[0],
       ""
     );
