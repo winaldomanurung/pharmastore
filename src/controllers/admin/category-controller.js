@@ -7,6 +7,51 @@ const {
   editCategorySchema,
 } = require("../../helpers/validation-schema");
 
+module.exports.readCategoryById = async (req, res) => {
+  const categoryId = req.params.categoryId;
+
+  try {
+    // const CHECK_VERIFIED_USER = `SELECT isVerified,userId FROM users WHERE userId = ${database.escape(
+    //   userId
+    // )}`;
+    // const [VERIFIED_USER] = await database.execute(CHECK_VERIFIED_USER);
+
+    let GET_CATEGORY = `SELECT * FROM categories WHERE id = ?;`;
+
+    const [CATEGORY] = await database.execute(GET_CATEGORY, [categoryId]);
+
+    if (!CATEGORY.length) {
+      throw new createError(
+        httpStatus.Internal_Server_Error,
+        "There isn't any category yet",
+        "Category is not found."
+      );
+    }
+
+    const response = new createResponse(
+      httpStatus.OK,
+      "Category data fetched",
+      "Category data fetched successfully!",
+      CATEGORY,
+      CATEGORY.length
+    );
+
+    res.status(response.status).send(response);
+  } catch (err) {
+    console.log("error : ", err);
+    const isTrusted = err instanceof createError;
+    if (!isTrusted) {
+      err = new createError(
+        httpStatus.Internal_Server_Error,
+        "SQL Script Error",
+        err.sqlMessage
+      );
+      console.log(err);
+    }
+    res.status(err.status).send(err);
+  }
+};
+
 module.exports.readCategories = async (req, res) => {
   try {
     // const CHECK_VERIFIED_USER = `SELECT isVerified,userId FROM users WHERE userId = ${database.escape(
@@ -23,8 +68,8 @@ module.exports.readCategories = async (req, res) => {
 
     const response = new createResponse(
       httpStatus.OK,
-      "Products data fetched",
-      "Products data fetched successfully!",
+      "Categories data fetched",
+      "Categories data fetched successfully!",
       CATEGORIES,
       CATEGORIES.length
     );
@@ -98,7 +143,7 @@ module.exports.updateCategory = async (req, res) => {
   console.log(categoryId, name);
 
   try {
-    // 1. Check data apakah product exist di dalam database
+    // 1. Check data apakah category exist di dalam database
     const FIND_CATEGORY = `SELECT * FROM categories WHERE id = ${database.escape(
       categoryId
     )};`;
@@ -176,7 +221,7 @@ module.exports.createCategory = async (req, res) => {
     if (error) {
       throw new createError(
         httpStatus.Bad_Request,
-        "Create product failed",
+        "Create category failed",
         error.details[0].message
       );
     }

@@ -32,7 +32,18 @@ module.exports.readProducts = async (req, res) => {
     let GET_PRODUCTS;
 
     if (name) {
-      GET_PRODUCTS = `SELECT * FROM products WHERE name LIKE '%${name}%' ORDER BY ${sortBy} ${order} LIMIT ${offset}, ${limit} ;`;
+      GET_PRODUCTS = `SELECT 
+      p.id, 
+      p.name,
+        p.picture,
+      c.name as category,
+      p.description, 
+        p.price,
+      p.stock, 
+        p.volume,
+        p.unit
+    FROM products p
+    LEFT JOIN categories c ON p.category = c.id WHERE name LIKE '%${name}%' ORDER BY ${sortBy} ${order} LIMIT ${offset}, ${limit} ;`;
 
       const [PRODUCTS] = await database.execute(GET_PRODUCTS);
 
@@ -46,7 +57,18 @@ module.exports.readProducts = async (req, res) => {
 
       res.status(response.status).send(response);
     } else if (category) {
-      GET_PRODUCTS = `SELECT * FROM products WHERE category LIKE '%${category}%' ORDER BY ${sortBy} ${order} LIMIT ${offset}, ${limit} ;`;
+      GET_PRODUCTS = `SELECT 
+      p.id, 
+      p.name,
+        p.picture,
+      c.name as category,
+      p.description, 
+        p.price,
+      p.stock, 
+        p.volume,
+        p.unit
+    FROM products p
+    LEFT JOIN categories c ON p.category = c.id WHERE category LIKE '%${category}%' ORDER BY ${sortBy} ${order} LIMIT ${offset}, ${limit} ;`;
 
       const [PRODUCTS] = await database.execute(GET_PRODUCTS);
 
@@ -60,7 +82,18 @@ module.exports.readProducts = async (req, res) => {
 
       res.status(response.status).send(response);
     } else {
-      GET_PRODUCTS = `SELECT * FROM products ORDER BY ${sortBy} ${order} LIMIT ${offset}, ${limit};`;
+      GET_PRODUCTS = `SELECT 
+      p.id, 
+      p.name,
+        p.picture,
+      c.name as category,
+      p.description, 
+        p.price,
+      p.stock, 
+        p.volume,
+        p.unit
+    FROM products p
+    LEFT JOIN categories c ON p.category = c.id ORDER BY ${sortBy} ${order} LIMIT ${offset}, ${limit};`;
 
       const [PRODUCTS] = await database.execute(GET_PRODUCTS);
 
