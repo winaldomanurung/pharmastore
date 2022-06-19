@@ -38,7 +38,7 @@ module.exports.readProducts = async (req, res) => {
         p.picture,
       c.name as category,
       p.description, 
-        p.price,
+        p.price, p.sold,
       p.stock, 
         p.volume,
         p.unit
@@ -63,7 +63,7 @@ module.exports.readProducts = async (req, res) => {
         p.picture,
       c.name as category,
       p.description, 
-        p.price,
+        p.price, p.sold,
       p.stock, 
         p.volume,
         p.unit
@@ -88,7 +88,7 @@ module.exports.readProducts = async (req, res) => {
         p.picture,
       c.name as category,
       p.description, 
-        p.price,
+        p.price, p.sold,
       p.stock, 
         p.volume,
         p.unit

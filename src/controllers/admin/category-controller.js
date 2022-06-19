@@ -53,25 +53,28 @@ module.exports.readCategoryById = async (req, res) => {
 };
 
 module.exports.readCategories = async (req, res) => {
+  const page = req.query.page || 1;
+  const limit = req.query.limit || 10;
+  const offset = (page - 1) * limit;
   try {
     // const CHECK_VERIFIED_USER = `SELECT isVerified,userId FROM users WHERE userId = ${database.escape(
     //   userId
     // )}`;
     // const [VERIFIED_USER] = await database.execute(CHECK_VERIFIED_USER);
 
-    let GET_CATEGORIES = `SELECT * FROM categories;`;
+    let GET_CATEGORIES = `SELECT * FROM categories LIMIT ${offset}, ${limit};`;
 
     const [CATEGORIES] = await database.execute(GET_CATEGORIES);
 
-    // const GET_CATEGORIES_TOTAL = `SELECT * FROM categories;`;
-    // const [TOTAL_CATEGORIES] = await database.execute(GET_CATEGORIES_TOTAL);
+    const GET_CATEGORIES_TOTAL = `SELECT * FROM categories;`;
+    const [TOTAL_CATEGORIES] = await database.execute(GET_CATEGORIES_TOTAL);
 
     const response = new createResponse(
       httpStatus.OK,
       "Categories data fetched",
       "Categories data fetched successfully!",
       CATEGORIES,
-      CATEGORIES.length
+      TOTAL_CATEGORIES.length
     );
 
     res.status(response.status).send(response);
