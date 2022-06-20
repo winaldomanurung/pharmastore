@@ -29,3 +29,16 @@ module.exports.addCategorySchema = Joi.object({
 module.exports.editCategorySchema = Joi.object({
   name: Joi.string().min(3).max(25).allow(null, ""),
 });
+
+module.exports.loginSchema = Joi.object({
+  username: Joi.string().min(8),
+  email: Joi.string().email(),
+  password: Joi.string()
+    .min(8)
+    .pattern(/[!@#$%&*_!]/)
+    .pattern(/[A-Z]/)
+    .pattern(/[a-z]/)
+    .pattern(/[0-9]/)
+    .required(),
+});
+
